@@ -20,6 +20,7 @@ void setupAxis();
 void cleanupAxis();
 void drawAxis();
 }
+
 extern void setupPrims();
 extern void renderPrims();
 extern void cleanupPrims();
@@ -92,12 +93,14 @@ void GLinit(int width, int height) {
 	// Setup shaders & geometry
 	Box::setupCube();
 	Axis::setupAxis();
+
 	setupPrims();
 }
 
 void GLcleanup() {
 	Box::cleanupCube();
 	Axis::cleanupAxis();
+
 	cleanupPrims();
 }
 
