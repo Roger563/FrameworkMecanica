@@ -59,6 +59,18 @@ void cleanupPrims() {
 }
 
 void renderPrims() {
+	// HERE:
+		// On posem aquest bool a true? (parlant de l'esfera)
+		// Com canviar la posició de l'esfera?
+		// Necessitem una classe intermitja com la classe ParticleSystem?
+		// Des de on cridem els mètodes de la classe Sphere_intermediate?
+
+		// Per què les partícules segueixen rebotant (efecte "jittering") fins i tot quan tenen velocitats molt baixes.
+
+		// Hem de crear els plans del cub a fora? (no fer un new)
+
+		// Com fer l'override de la funció per crear un plà a partir de 3 punts? (ja que els types són els mateixos que la de 1 punt i 2 vectors)
+
 	if (renderSphere)
 		Sphere::drawSphere();
 	if (renderCapsule)

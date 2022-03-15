@@ -3,8 +3,10 @@
 
 #define ELASTICITY 0.6f
 #define ACCELERATION_X 0.f
-#define ACCELERATION_Y 0.f
+#define ACCELERATION_Y -9.81f
 #define ACCELERATION_Z -9.81f
+
+// TODO: Posar el bool de renderització de l'esfera a true al principi de TeleportingParticles.
 
 // Auxiliar methods
 #pragma region auxiliar
@@ -54,7 +56,6 @@ TeleportingParticles::~TeleportingParticles() {
 }
 
 void TeleportingParticles::Update(float dt) {
-    // TODO implement logic to make particles fall down
     // NEW:
     eulerIntegrator->Step(dt);
     // ------
@@ -70,7 +71,6 @@ void TeleportingParticles::Update(float dt) {
     for (int i = 0; i < numParticles; i++) {
         particles->SetParticleLastPosition(i, particles->GetParticlePosition(i));
     }
-
 }
 
 void TeleportingParticles::RenderUpdate() {

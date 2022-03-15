@@ -9,5 +9,5 @@ namespace Sphere {
 
 Sphere_intermediate::Sphere_intermediate(glm::vec3 _position, float radius)
 {
-	Sphere::setupSphere(_position, radius);
+	Sphere::updateSphere(glm::vec3(0, 5, 0), 2.f);
 }
