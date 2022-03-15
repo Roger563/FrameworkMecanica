@@ -14,7 +14,7 @@ RandomStaticParticles::RandomStaticParticles() {
 	maxY = 10.f;
 
 	int maxParticles = 100;
-	particles = new ParticleSystem(maxParticles);
+	particles = new ParticleSystem(maxParticles,1);
 
 	// Enable the rendering of particles in the framework 
 	extern bool renderParticles; renderParticles = true;

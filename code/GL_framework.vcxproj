@@ -134,6 +134,9 @@ xcopy $(ProjectDir)libs\SDL2.dll $(OutDir) /y /d</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Mathematics.cpp" />
+    <ClCompile Include="src\Plane.cpp" />
+    <ClCompile Include="src\EulerIntegrator.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
     <ClCompile Include="include\imgui\imgui_draw.cpp" />
@@ -147,10 +150,13 @@ xcopy $(ProjectDir)libs\SDL2.dll $(OutDir) /y /d</Command>
     <ClCompile Include="src\TeleportingParticles.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\EulerIntegrator.h" />
     <ClInclude Include="include\ParticleSystem.h" />
     <ClInclude Include="include\RandomStaticParticles.h" />
     <ClInclude Include="include\Simulator.h" />
     <ClInclude Include="include\TeleportingParticles.h" />
+    <ClInclude Include="include\Plane.h" />
+    <ClInclude Include="include\Mathematics.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
