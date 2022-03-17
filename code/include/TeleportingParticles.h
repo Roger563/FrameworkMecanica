@@ -5,7 +5,7 @@
 #include "ParticleSystem.h"
 #include "EulerIntegrator.h"
 #include "Mathematics.h"
-
+#include "Sphere_intermediate.h"
 class TeleportingParticles : public Simulator {
 public:
 	TeleportingParticles();
@@ -14,6 +14,7 @@ public:
 	void Update(float dt);
 	void RenderUpdate();
 	void RenderGui();
+	
 private:
 	ParticleSystem* particles;
 	EulerIntegrator* eulerIntegrator;

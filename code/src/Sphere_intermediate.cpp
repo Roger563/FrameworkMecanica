@@ -7,7 +7,25 @@ namespace Sphere {
 	void drawSphere();
 }
 
-Sphere_intermediate::Sphere_intermediate(glm::vec3 _position, float radius)
+Sphere_intermediate::Sphere_intermediate(glm::vec3 position, float radius)
 {
-	Sphere::updateSphere(glm::vec3(0, 5, 0), 2.f);
+	Sphere::updateSphere(position, radius);
+	_position = position;
+	_radius = radius;
+}
+
+glm::vec3 Sphere_intermediate::GetPosition()
+{
+	return _position;
+}
+
+float Sphere_intermediate::GetRadius()
+{
+	return _radius;
+}
+
+void Sphere_intermediate::DrawSphere_intermediate()
+{
+	//com la esfera es estatica no fem update
+	Sphere::drawSphere();
 }

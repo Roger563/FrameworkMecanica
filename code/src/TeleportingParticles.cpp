@@ -1,15 +1,22 @@
 #include <glm\glm.hpp>
 #include "TeleportingParticles.h";
 
+
 #define ELASTICITY 0.6f
 #define ACCELERATION_X 0.f
-#define ACCELERATION_Y -9.81f
-#define ACCELERATION_Z -9.81f
+#define ACCELERATION_Y -9.8f
+#define ACCELERATION_Z 0.f
 
 // TODO: Posar el bool de renderització de l'esfera a true al principi de TeleportingParticles.
 
 // Auxiliar methods
 #pragma region auxiliar
+
+//global variables:
+extern bool renderSphere;
+extern bool renderCapsule;
+Sphere_intermediate* sphere;
+
 glm::vec3 GetParticleInitialPosition(int id, int numParticles) {
     float margin = 0.1f;
     float available_length = 2 * (5.f - margin);
@@ -28,11 +35,12 @@ glm::vec3 GetParticleInitialPosition(int id, int numParticles) {
 
 #pragma region class
 TeleportingParticles::TeleportingParticles() {
+    renderSphere = true;
     numParticles = 40;
     particles = new ParticleSystem(numParticles,ELASTICITY);
     eulerIntegrator = new EulerIntegrator(particles);
     mathematics = new Mathematics(particles);
-
+    sphere = new Sphere_intermediate(glm::vec3(1, 5, 0), 2.f);
     // NEW:
     for (int i = 0; i < numParticles; i++) {
         particles->SetVelocity(i, glm::vec3(0.0f, 0.0f, 0.0f));
@@ -52,6 +60,7 @@ TeleportingParticles::TeleportingParticles() {
 }
 
 TeleportingParticles::~TeleportingParticles() {
+    renderSphere = false;
     delete particles;
 }
 
@@ -68,6 +77,8 @@ void TeleportingParticles::Update(float dt) {
     mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, 0, 1), 5.f)); // Z NEGATIVE
     mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, 0, -1), 5.f)); // Z POSITIVE
 
+    mathematics->GetSphereCollisionPlane(sphere); // sphere
+
     for (int i = 0; i < numParticles; i++) {
         particles->SetParticleLastPosition(i, particles->GetParticlePosition(i));
     }
@@ -75,6 +86,7 @@ void TeleportingParticles::Update(float dt) {
 
 void TeleportingParticles::RenderUpdate() {
     particles->Render();
+    sphere->DrawSphere_intermediate();
 }
 
 void TeleportingParticles::RenderGui() {};
