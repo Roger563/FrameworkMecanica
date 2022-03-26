@@ -2,6 +2,8 @@
 
 #include <glm\glm.hpp>
 
+#include <vector>
+
 class ParticleSystem {
 public:
 	ParticleSystem(int maxParticles,float elasticity);
@@ -31,7 +33,7 @@ private:
 	int _activeParticlesCount;
 	int activeParticlesFirstPosition;
 
-	glm::vec3* positions;
+	std::vector<glm::vec3>* positions;
 	float* _lifeTime;
 	bool* _active;
 	glm::vec3* lastPositions;

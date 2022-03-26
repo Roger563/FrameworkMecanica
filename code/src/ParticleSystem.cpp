@@ -8,18 +8,20 @@ namespace LilSpheres {
 	extern void updateParticles(int startIdx, int count, float* array_data);
 }
 
-ParticleSystem::ParticleSystem(int numParticles,float elasticity) : maxParticles(numParticles) {
-	positions = new glm::vec3[maxParticles];
-	lastPositions = new glm::vec3[maxParticles];
+ParticleSystem::ParticleSystem(int numParticles,float elasticity) : maxParticles(numParticles)
+{
+	positions = new std::vector<glm::vec3>[maxParticles]; // Vector
+	lastPositions = new glm::vec3[maxParticles]; // Array
 	velocity = new glm::vec3[maxParticles];
 	acceleration = new glm::vec3[maxParticles];
 	_active = new bool[maxParticles];
 	_lifeTime = new float[maxParticles];
 	_elasticityCoef = elasticity;
 
-	for (int i = 0; i < maxParticles; i++) {
-		positions[i] = glm::vec3(0.f, 0.f, 0.f);
-		lastPositions[i] = glm::vec3(0.f, 0.f, 0.f);
+	for (int i = 0; i < maxParticles; i++)
+	{
+		positions->push_back(glm::vec3(0.0f, 0.0f, 0.0f)); // Vector
+		lastPositions[i] = glm::vec3(0.f, 0.f, 0.f); // Array
 		velocity[i] = glm::vec3(0.f, 0.f, 0.f);
 		acceleration[i] = glm::vec3(0.f, 0.f, 0.f);
 		_active[i] = false;
@@ -44,7 +46,7 @@ void ParticleSystem::Render() {
 	LilSpheres::particleCount = GetNumberOfParticles();
 	//LilSpheres::updateParticles(activeParticlesFirstPosition, numParticles1, &(positions[0].x));
 	//LilSpheres::updateParticles(0, numParticles2, &(positions[numParticles1].x));
-	LilSpheres::updateParticles(0, GetNumberOfParticles(), &(positions[0].x));
+	LilSpheres::updateParticles(0, GetNumberOfParticles(), &(positions[0]));
 
 }
 
