@@ -26,9 +26,9 @@ void Mathematics::CheckCollisionWithPlane(Plane* plane)
     }
 }
 
-void Mathematics::Collide(Plane* plane,int index)
+void Mathematics::Collide(Plane* plane, int index)
 {
-    _ps->SetParticlePosition( index,_ps->GetParticlePosition(index)-(1+_ps->GetParticleElasticity())*(glm::dot(plane->GetNormal(), _ps->GetParticlePosition(index)) + plane->GetD())* plane->GetNormal());
+    _ps->SetParticlePosition(index, _ps->GetParticlePosition(index) - (1 + _ps->GetParticleElasticity()) * (glm::dot(plane->GetNormal(), _ps->GetParticlePosition(index)) + plane->GetD()) * plane->GetNormal());
     _ps->SetVelocity( index,_ps->GetParticleVelocity(index)-(1+_ps->GetParticleElasticity())*(glm::dot(plane->GetNormal(),_ps->GetParticleVelocity(index)))* plane->GetNormal());
 }
 

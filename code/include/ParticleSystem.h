@@ -33,7 +33,7 @@ private:
 	int _activeParticlesCount;
 	int activeParticlesFirstPosition;
 
-	std::vector<glm::vec3>* positions;
+	std::vector<glm::vec3*> positions;
 	float* _lifeTime;
 	bool* _active;
 	glm::vec3* lastPositions;

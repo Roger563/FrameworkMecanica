@@ -8,9 +8,9 @@ namespace LilSpheres {
 	extern void updateParticles(int startIdx, int count, float* array_data);
 }
 
-ParticleSystem::ParticleSystem(int numParticles,float elasticity) : maxParticles(numParticles)
+ParticleSystem::ParticleSystem(int numParticles, float elasticity) : maxParticles(numParticles)
 {
-	positions = new std::vector<glm::vec3>[maxParticles]; // Vector
+	//positions = std::vector<glm::vec3>[maxParticles]; // Vector
 	lastPositions = new glm::vec3[maxParticles]; // Array
 	velocity = new glm::vec3[maxParticles];
 	acceleration = new glm::vec3[maxParticles];
@@ -20,7 +20,7 @@ ParticleSystem::ParticleSystem(int numParticles,float elasticity) : maxParticles
 
 	for (int i = 0; i < maxParticles; i++)
 	{
-		positions->push_back(glm::vec3(0.0f, 0.0f, 0.0f)); // Vector
+		positions.push_back(new glm::vec3(0.0f, 0.0f, 0.0f)); // Vector
 		lastPositions[i] = glm::vec3(0.f, 0.f, 0.f); // Array
 		velocity[i] = glm::vec3(0.f, 0.f, 0.f);
 		acceleration[i] = glm::vec3(0.f, 0.f, 0.f);
@@ -29,9 +29,16 @@ ParticleSystem::ParticleSystem(int numParticles,float elasticity) : maxParticles
 	}
 };
 
-ParticleSystem::~ParticleSystem() {
+ParticleSystem::~ParticleSystem()
+{
 	printf("Destruct the particle system\n");
-	delete positions;
+
+	for (int i = positions.size(); i < 0; i--)
+	{
+		delete positions[i];
+	}
+
+	positions.clear();
 };
 
 int ParticleSystem::GetNumberOfParticles() {
@@ -46,12 +53,12 @@ void ParticleSystem::Render() {
 	LilSpheres::particleCount = GetNumberOfParticles();
 	//LilSpheres::updateParticles(activeParticlesFirstPosition, numParticles1, &(positions[0].x));
 	//LilSpheres::updateParticles(0, numParticles2, &(positions[numParticles1].x));
-	LilSpheres::updateParticles(0, GetNumberOfParticles(), &(positions[0]));
+	LilSpheres::updateParticles(0, GetNumberOfParticles(), &(positions[0]->x));
 
 }
 
 void ParticleSystem::SetParticlePosition(int particleId, glm::vec3 position) {
-	positions[particleId] = position;
+	positions[particleId] = &position;
 }
 
 void ParticleSystem::SetParticleLastPosition(int particleId, glm::vec3 position)
@@ -60,7 +67,7 @@ void ParticleSystem::SetParticleLastPosition(int particleId, glm::vec3 position)
 }
 
 glm::vec3 ParticleSystem::GetParticlePosition(int particleId) {
-	return positions[particleId];
+	return *(positions[particleId]);
 }
 
 float ParticleSystem::GetParticleElasticity()

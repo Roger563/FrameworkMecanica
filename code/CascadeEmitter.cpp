@@ -20,7 +20,7 @@ void CascadeEmitter::SpawnParticle()
 {
 	//calculate random pos in the line
 	_lambda = rand() % 1;
-	_spawningPos = _point1 + _lambda * _vect;
+	_spawningPos = glm::vec3(_point1 + (_lambda * _vect));
 	//setup the particle
 	_particleSystem->SetAcceleration(_nextParticleToSpawn, _acceleration);
 	_particleSystem->SetVelocity(_nextParticleToSpawn, _initialVelocity);
