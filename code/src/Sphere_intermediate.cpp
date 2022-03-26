@@ -29,3 +29,15 @@ void Sphere_intermediate::DrawSphere_intermediate()
 	//com la esfera es estatica no fem update
 	Sphere::drawSphere();
 }
+
+
+
+void Sphere_intermediate::Update(glm::vec3 position)
+{
+	_position = position;
+}
+
+void Sphere_intermediate::UpdateRadius(float radius)
+{
+	_radius = radius;
+}

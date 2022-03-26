@@ -63,6 +63,15 @@
     <ClCompile Include="src\Sphere_intermediate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Gui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Capsule_intermediate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CascadeEmitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\RandomStaticParticles.h">
@@ -87,6 +96,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Sphere_intermediate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Gui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Capsule_intermediate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CascadeEmitter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

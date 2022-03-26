@@ -41,40 +41,42 @@ bool Mathematics::HasCollidedWithSphere(Sphere_intermediate* sphere, glm::vec3 p
 
 void Mathematics::GetSphereCollisionPlane(Sphere_intermediate* sphere)
 {
-    for (int i = 0; i < _ps->GetNumberOfParticles(); i++)
-    {
-        if (HasCollidedWithSphere(sphere, _ps->GetParticlePosition(i))) {
+    if (sphere->active) {
+        for (int i = 0; i < _ps->GetNumberOfParticles(); i++)
+        {
+            if (HasCollidedWithSphere(sphere, _ps->GetParticlePosition(i))) {
 
-            glm::vec3 LP = _ps->GetParticlePosition(i) - _ps->GetParticleLastPosition(i);
-            glm::vec3 v = Normalize(LP);
+                glm::vec3 LP = _ps->GetParticlePosition(i) - _ps->GetParticleLastPosition(i);
+                glm::vec3 v = Normalize(LP);
 
-            // in the 2nd grade equation :
-            //a=v dot v
-            //b= 2(XdotV - VdotC)
-            //c = (X-C) DOT (X-C) - POW(R,2)
-            float a = glm::dot(v, v);
-            float b = 2 * (glm::dot(_ps->GetParticlePosition(i), v) - glm::dot(v, sphere->GetPosition()));
-            float c = glm::dot((_ps->GetParticlePosition(i) - sphere->GetPosition()), (_ps->GetParticlePosition(i) - sphere->GetPosition())) - pow(sphere->GetRadius(), 2);
+                // in the 2nd grade equation :
+                //a=v dot v
+                //b= 2(XdotV - VdotC)
+                //c = (X-C) DOT (X-C) - POW(R,2)
+                float a = glm::dot(v, v);
+                float b = 2 * (glm::dot(_ps->GetParticlePosition(i), v) - glm::dot(v, sphere->GetPosition()));
+                float c = glm::dot((_ps->GetParticlePosition(i) - sphere->GetPosition()), (_ps->GetParticlePosition(i) - sphere->GetPosition())) - pow(sphere->GetRadius(), 2);
 
-            //-b +- sqr(pow(b,2)-4*a*c)   / 2a 
+                //-b +- sqr(pow(b,2)-4*a*c)   / 2a 
 
-            float result  = (-b + sqrt(pow(b, 2) - (double)4.0f * a * c)) / 2.0f;
-            float result2 = (-b - sqrt(pow(b, 2) - (double)4.0f * a * c)) / 2.0f;
-            float lambda;
-            //check lamdas-> DUBTE
-            if (sqrt(pow(result, 2) < sqrt(pow(result2, 2)))) {
-                lambda = result;
+                float result = (-b + sqrt(pow(b, 2) - (double)4.0f * a * c)) / 2.0f;
+                float result2 = (-b - sqrt(pow(b, 2) - (double)4.0f * a * c)) / 2.0f;
+                float lambda;
+                //check lamdas
+                if (result < 0) {
+                    lambda = result;
+                }
+                else {
+                    lambda = result2;
+                }
+                //substitute landa on the line equation:
+                glm::vec3 intersectionPoint = _ps->GetParticlePosition(i) + lambda * v;
+
+                glm::vec3 planeNormal = Normalize((intersectionPoint - sphere->GetPosition()));
+                //collision plane
+                Plane* plane = GetPlane(intersectionPoint, planeNormal);
+                Collide(plane, i);
             }
-            else {
-                lambda = result2;
-            }
-            //substitute landa on the line equation:
-            glm::vec3 intersectionPoint = _ps->GetParticlePosition(i) + lambda * v;
-
-            glm::vec3 planeNormal = Normalize((intersectionPoint - sphere->GetPosition()));
-            //
-            Plane* plane = GetPlane(intersectionPoint, planeNormal);
-            Collide(plane, i);
         }
     }
 }

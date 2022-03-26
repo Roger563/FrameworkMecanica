@@ -6,6 +6,9 @@
 #include "EulerIntegrator.h"
 #include "Mathematics.h"
 #include "Sphere_intermediate.h"
+#include "Gui.h"
+#include "CascadeEmitter.h"
+
 class TeleportingParticles : public Simulator {
 public:
 	TeleportingParticles();
@@ -16,8 +19,9 @@ public:
 	void RenderGui();
 	
 private:
-	ParticleSystem* particles;
+	ParticleSystem* particleSystem;
 	EulerIntegrator* eulerIntegrator;
 	Mathematics* mathematics;
 	int numParticles;
+	Gui* gui;
 };

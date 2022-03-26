@@ -134,6 +134,9 @@ xcopy $(ProjectDir)libs\SDL2.dll $(OutDir) /y /d</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CascadeEmitter.cpp" />
+    <ClCompile Include="src\Capsule_intermediate.cpp" />
+    <ClCompile Include="src\Gui.cpp" />
     <ClCompile Include="src\Sphere_intermediate.cpp" />
     <ClCompile Include="src\Mathematics.cpp" />
     <ClCompile Include="src\Plane.cpp" />
@@ -151,6 +154,9 @@ xcopy $(ProjectDir)libs\SDL2.dll $(OutDir) /y /d</Command>
     <ClCompile Include="src\TeleportingParticles.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CascadeEmitter.h" />
+    <ClInclude Include="include\Capsule_intermediate.h" />
+    <ClInclude Include="include\Gui.h" />
     <ClInclude Include="include\EulerIntegrator.h" />
     <ClInclude Include="include\ParticleSystem.h" />
     <ClInclude Include="include\RandomStaticParticles.h" />

@@ -17,10 +17,23 @@ public:
 	glm::vec3 GetParticleVelocity(int particleId);
 	glm::vec3 GetParticleAcceleration(int particleId);
 	void SetVelocity(int particleId, glm::vec3 vel);
+	//LifeTime
+	void SetLifeTime(int particleId, float lifeTime);
+	float* GetLifeTime(int particleId);
+	//active state
+	void SetActive(int particleId, bool active);
+	bool IsActive(int particleId);
+	void SetActiveParticleFirstPos(int firstPos);
+	void SetActiveParticleCount(int activeParticleCount);
 	void SetAcceleration(int particleId, glm::vec3 acc);
 private:
 	int maxParticles;
+	int _activeParticlesCount;
+	int activeParticlesFirstPosition;
+
 	glm::vec3* positions;
+	float* _lifeTime;
+	bool* _active;
 	glm::vec3* lastPositions;
 	glm::vec3* velocity;
 	glm::vec3* acceleration;

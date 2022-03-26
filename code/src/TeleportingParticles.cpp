@@ -23,9 +23,9 @@ glm::vec3 GetParticleInitialPosition(int id, int numParticles) {
     float offset = available_length / (numParticles - 1);
 
     float x, y, z;
-    x = z = -5.f + margin + id * offset;
+    x = /*z = */-5.f + margin + id * offset;
     y = 9.9f;
-
+    z = 0;
     return glm::vec3(x, y, z);
 }
 
@@ -37,20 +37,21 @@ glm::vec3 GetParticleInitialPosition(int id, int numParticles) {
 TeleportingParticles::TeleportingParticles() {
     renderSphere = true;
     numParticles = 40;
-    particles = new ParticleSystem(numParticles,ELASTICITY);
-    eulerIntegrator = new EulerIntegrator(particles);
-    mathematics = new Mathematics(particles);
+    particleSystem = new ParticleSystem(numParticles,ELASTICITY);
+    eulerIntegrator = new EulerIntegrator(particleSystem);
+    mathematics = new Mathematics(particleSystem);
     sphere = new Sphere_intermediate(glm::vec3(1, 5, 0), 2.f);
+    gui = new Gui(sphere);
     // NEW:
     for (int i = 0; i < numParticles; i++) {
-        particles->SetVelocity(i, glm::vec3(0.0f, 0.0f, 0.0f));
-        particles->SetAcceleration(i, glm::vec3(ACCELERATION_X, ACCELERATION_Y, ACCELERATION_Z));
+        particleSystem->SetVelocity(i, glm::vec3(0.0f, 0.0f, 0.0f));
+        particleSystem->SetAcceleration(i, glm::vec3(ACCELERATION_X, ACCELERATION_Y, ACCELERATION_Z));
 
     }
     // ------
     for (int i = 0; i < numParticles; i++) {
-        particles->SetParticlePosition(i, GetParticleInitialPosition(i, numParticles));
-        particles->SetParticleLastPosition(i, GetParticleInitialPosition(i, numParticles));
+        particleSystem->SetParticlePosition(i, GetParticleInitialPosition(i, numParticles));
+        particleSystem->SetParticleLastPosition(i, GetParticleInitialPosition(i, numParticles));
     }
 
     // Enable the rendering of particles in the framework 
@@ -61,10 +62,11 @@ TeleportingParticles::TeleportingParticles() {
 
 TeleportingParticles::~TeleportingParticles() {
     renderSphere = false;
-    delete particles;
+    delete particleSystem;
 }
 
 void TeleportingParticles::Update(float dt) {
+    gui->Update(dt);
     // NEW:
     eulerIntegrator->Step(dt);
     // ------
@@ -80,15 +82,18 @@ void TeleportingParticles::Update(float dt) {
     mathematics->GetSphereCollisionPlane(sphere); // sphere
 
     for (int i = 0; i < numParticles; i++) {
-        particles->SetParticleLastPosition(i, particles->GetParticlePosition(i));
+        particleSystem->SetParticleLastPosition(i, particleSystem->GetParticlePosition(i));
     }
 }
 
 void TeleportingParticles::RenderUpdate() {
-    particles->Render();
+    gui->RenderUpdate();
+    particleSystem->Render();
     sphere->DrawSphere_intermediate();
 }
 
-void TeleportingParticles::RenderGui() {};
+void TeleportingParticles::RenderGui() {
+    gui->RenderGui();
+};
 
 #pragma endregion

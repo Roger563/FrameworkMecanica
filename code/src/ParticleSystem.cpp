@@ -13,6 +13,8 @@ ParticleSystem::ParticleSystem(int numParticles,float elasticity) : maxParticles
 	lastPositions = new glm::vec3[maxParticles];
 	velocity = new glm::vec3[maxParticles];
 	acceleration = new glm::vec3[maxParticles];
+	_active = new bool[maxParticles];
+	_lifeTime = new float[maxParticles];
 	_elasticityCoef = elasticity;
 
 	for (int i = 0; i < maxParticles; i++) {
@@ -20,6 +22,8 @@ ParticleSystem::ParticleSystem(int numParticles,float elasticity) : maxParticles
 		lastPositions[i] = glm::vec3(0.f, 0.f, 0.f);
 		velocity[i] = glm::vec3(0.f, 0.f, 0.f);
 		acceleration[i] = glm::vec3(0.f, 0.f, 0.f);
+		_active[i] = false;
+		_lifeTime[i] = 0;
 	}
 };
 
@@ -33,10 +37,15 @@ int ParticleSystem::GetNumberOfParticles() {
 };
 
 void ParticleSystem::Render() {
+    int numParticles1 = ((activeParticlesFirstPosition- 1 ) + _activeParticlesCount) % maxParticles;
+	int	numParticles2 = _activeParticlesCount - numParticles1;
+	
 	LilSpheres::firstParticleIdx = 0;
 	LilSpheres::particleCount = GetNumberOfParticles();
-
+	//LilSpheres::updateParticles(activeParticlesFirstPosition, numParticles1, &(positions[0].x));
+	//LilSpheres::updateParticles(0, numParticles2, &(positions[numParticles1].x));
 	LilSpheres::updateParticles(0, GetNumberOfParticles(), &(positions[0].x));
+
 }
 
 void ParticleSystem::SetParticlePosition(int particleId, glm::vec3 position) {
@@ -75,6 +84,36 @@ glm::vec3 ParticleSystem::GetParticleAcceleration(int particleId)
 void ParticleSystem::SetVelocity(int particleId, glm::vec3 vel)
 {
 	velocity[particleId] = vel;
+}
+
+void ParticleSystem::SetLifeTime(int particleId, float lifeTime)
+{
+	_lifeTime[particleId] = lifeTime;
+}
+
+float* ParticleSystem::GetLifeTime(int particleId)
+{
+	return _lifeTime;
+}
+
+void ParticleSystem::SetActive(int particleId, bool active)
+{
+	_active[particleId] = active;
+}
+
+bool ParticleSystem::IsActive(int particleId)
+{
+	return _active;
+}
+
+void ParticleSystem::SetActiveParticleFirstPos(int firstPos)
+{
+	activeParticlesFirstPosition = firstPos;
+}
+
+void ParticleSystem::SetActiveParticleCount(int activeParticleCount)
+{
+	_activeParticlesCount = activeParticleCount;
 }
 
 void ParticleSystem::SetAcceleration(int particleId, glm::vec3 acc)
