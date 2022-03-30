@@ -33,7 +33,7 @@ void RandomStaticParticles::RenderGui() {
 }
 
 void RandomStaticParticles::Update(float dt) {
-	for (int i = 0; i < particles->GetNumberOfParticles(); i++) {
+	for (int i = 0; i < particles->GetParticlesCount(); i++) {
 		float x = minX + (float)rand() / (RAND_MAX / (maxX - minX));
 		float y = minY + (float)rand() / (RAND_MAX / (maxY - minY));
 		float z = minZ + (float)rand() / (RAND_MAX / (maxZ - minZ));

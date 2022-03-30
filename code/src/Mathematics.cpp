@@ -18,7 +18,7 @@ Plane* Mathematics::GetPlane(glm::vec3 point, glm::vec3 vec1, glm::vec3 vec2)
 
 void Mathematics::CheckCollisionWithPlane(Plane* plane)
 {
-    for (int i = 0; i < _ps->GetNumberOfParticles(); i++)
+    for (int i = 0; i < _ps->GetParticlesCount(); i++)
     {
         if ( ((glm::dot(plane->GetNormal(), _ps->GetParticleLastPosition(i)) + plane->GetD()) *(glm::dot(plane->GetNormal(), _ps->GetParticlePosition(i)) + plane->GetD()) ) <= 0){
             Collide(plane,i);
@@ -42,7 +42,7 @@ bool Mathematics::HasCollidedWithSphere(Sphere_intermediate* sphere, glm::vec3 p
 void Mathematics::GetSphereCollisionPlane(Sphere_intermediate* sphere)
 {
     if (sphere->active) {
-        for (int i = 0; i < _ps->GetNumberOfParticles(); i++)
+        for (int i = 0; i < _ps->GetParticlesCount(); i++)
         {
             if (HasCollidedWithSphere(sphere, _ps->GetParticlePosition(i))) {
 
@@ -87,6 +87,77 @@ glm::vec3 Mathematics::Normalize(glm::vec3 vec)
     glm::vec3 normalizedVec = glm::vec3(vec.x / magnitude, vec.y / magnitude, vec.z / magnitude);
     return normalizedVec;
 }
+
+void Mathematics::CheckCollisionWithCapsule(glm::vec3 center1, glm::vec3 center2, float radius)
+{
+    for (int i = 0; i < _ps->GetParticlesCount(); i++) {
+
+        glm::vec3 capsuleCenterVector = center2 - center1;
+        glm::vec3 normal = glm::normalize(capsuleCenterVector);
+        glm::vec3 particlePos = _ps->GetParticlePosition(i);
+        float d = -(particlePos.x * normal.x + particlePos.y * normal.y + particlePos.z * normal.z);
+        float lamda = (-d - glm::dot(center1, normal)) / glm::dot(normal, capsuleCenterVector);
+        glm::vec3 ClosestPoint = glm::vec3(center1.x + lamda * capsuleCenterVector.x, center1.y + lamda * capsuleCenterVector.y, center1.z + lamda * capsuleCenterVector.z);
+
+        if (glm::length(ClosestPoint-particlePos) < radius) {
+            GetCapsuleCollisionPlane(i,center1,center2,radius);
+        }
+    }
+}
+
+void Mathematics::GetCapsuleCollisionPlane(int id, glm::vec3 center1, glm::vec3 center2, float radius)
+{
+    glm::vec3 capsuleCenterVector = center2 - center1;
+    glm::vec3 normal = glm::normalize(capsuleCenterVector);
+    glm::vec3 particlePos = _ps->GetParticlePosition(id);
+    float d = -(particlePos.x * normal.x + particlePos.y * normal.y + particlePos.z * normal.z);
+    float lamda = (-d - glm::dot(center1, normal)) / glm::dot(normal, capsuleCenterVector);
+    glm::vec3 closestPoint = glm::vec3(center1.x + lamda * capsuleCenterVector.x, center1.y + lamda * capsuleCenterVector.y, center1.z + lamda * capsuleCenterVector.z);
+    lamda = glm::clamp(lamda, 0.f, 1.f);
+    //check if is outside the cylinder
+    if (lamda > 0.99f) {
+        GetSphereCollisionPlane(new Sphere_intermediate(center2,radius));
+    }
+    else if (lamda < 0.01f) {
+        GetSphereCollisionPlane(new Sphere_intermediate(center1, radius));
+    }
+    else{
+        //collision with cilinder
+        glm::vec3 pointInBetween= ((_ps->GetParticlePosition(id) + _ps->GetParticleLastPosition(id)) / 2.0f);
+        glm::vec3 Pos1 = _ps->GetParticlePosition(id);
+        glm::vec3 Pos2 = _ps->GetParticleLastPosition(id);
+        while(!(glm::distance(pointInBetween,closestPoint)>radius-0.2 && glm::distance(pointInBetween, closestPoint) < radius + 0.2)){
+
+            if (glm::distance(pointInBetween, closestPoint) > radius + 0.2) {
+                Pos2 = ( ((Pos1 + Pos2) / 2.0f) );
+                if (glm::distance(Pos2, closestPoint) > radius + 0.2) {
+                    pointInBetween = Pos2;
+                }
+                else {
+                    pointInBetween = Pos1;
+                }
+            }
+            else {
+                Pos1 = Pos2 + ( ((Pos1 + Pos2) / 2.0f) );
+                if (glm::distance(Pos1, closestPoint) > radius + 0.2) {
+                    pointInBetween = Pos1;
+                }
+                else {
+                    pointInBetween = Pos2;
+                }
+            }
+           
+        }
+        Collide(GetPlane(pointInBetween,(pointInBetween - closestPoint)), id);
+    }
+    
+
+    glm::vec3 lastPosCurrentPos = _ps->GetParticlePosition(id) - _ps->GetParticleLastPosition(id);
+
+    
+}
+
+
 
 
 

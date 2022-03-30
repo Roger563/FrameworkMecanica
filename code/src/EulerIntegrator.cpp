@@ -7,7 +7,7 @@ EulerIntegrator::EulerIntegrator(ParticleSystem* ps)
 
 void EulerIntegrator::Step(float dt)
 {
-	for (int i = 0; i < _ps->GetNumberOfParticles(); i++)
+	for (int i = 0; i < _ps->GetParticlesCount(); i++)
 	{
 		_ps->SetParticlePosition(i, CalculatePosition(i, dt));
 		_ps->SetVelocity(i, CalculateVelocity(i, dt));

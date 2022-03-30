@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Simulator.h";
+#include "Capsule_intermediate.h"
 #include "ParticleSystem.h"
 #include "EulerIntegrator.h"
 #include "Mathematics.h"
@@ -17,9 +18,9 @@ public:
 	void Update(float dt);
 	void RenderUpdate();
 	void RenderGui();
-	
+	CascadeEmitter* cascade;
 private:
-	ParticleSystem* particleSystem;
+	Capsule_intermediate* capsule;
 	EulerIntegrator* eulerIntegrator;
 	Mathematics* mathematics;
 	int numParticles;

@@ -1,8 +1,7 @@
 #include <glm\glm.hpp>
 #include "TeleportingParticles.h";
 
-
-#define ELASTICITY 0.6f
+#define ELASTICITY 0.1f
 #define ACCELERATION_X 0.f
 #define ACCELERATION_Y -9.8f
 #define ACCELERATION_Z 0.f
@@ -25,33 +24,35 @@ glm::vec3 GetParticleInitialPosition(int id, int numParticles) {
     float x, y, z;
     x = /*z = */-5.f + margin + id * offset;
     y = 9.9f;
-    z = 0;
+    z = 0; 
     return glm::vec3(x, y, z);
 }
 
 
 
 #pragma endregion
-
 #pragma region class
 TeleportingParticles::TeleportingParticles() {
+    
     renderSphere = true;
-    numParticles = 40;
-    particleSystem = new ParticleSystem(numParticles,ELASTICITY);
-    eulerIntegrator = new EulerIntegrator(particleSystem);
-    mathematics = new Mathematics(particleSystem);
+    numParticles = 1000;
+
+    cascade = new CascadeEmitter(1,1,ELASTICITY);
+    eulerIntegrator = new EulerIntegrator(cascade->_particleSystem);
+    mathematics = new Mathematics(cascade->_particleSystem);
+    capsule = new Capsule_intermediate(glm::vec3(-5, 5, 0), glm::vec3(5, 5, 0),2.0f);
     sphere = new Sphere_intermediate(glm::vec3(1, 5, 0), 2.f);
     gui = new Gui(sphere);
     // NEW:
     for (int i = 0; i < numParticles; i++) {
-        particleSystem->SetVelocity(i, glm::vec3(0.0f, 0.0f, 0.0f));
-        particleSystem->SetAcceleration(i, glm::vec3(ACCELERATION_X, ACCELERATION_Y, ACCELERATION_Z));
+       // cascade->_particleSystem->SetVelocity(i, glm::vec3(0.0f, 0.0f, 0.0f));
+        //cascade->_particleSystem->SetAcceleration(i, glm::vec3(ACCELERATION_X, ACCELERATION_Y, ACCELERATION_Z));
 
     }
     // ------
     for (int i = 0; i < numParticles; i++) {
-        particleSystem->SetParticlePosition(i, GetParticleInitialPosition(i, numParticles));
-        particleSystem->SetParticleLastPosition(i, GetParticleInitialPosition(i, numParticles));
+       // cascade->_particleSystem->SetParticlePosition(i, GetParticleInitialPosition(i, numParticles));
+        //cascade->_particleSystem->SetParticleLastPosition(i, GetParticleInitialPosition(i, numParticles));
     }
 
     // Enable the rendering of particles in the framework 
@@ -62,15 +63,16 @@ TeleportingParticles::TeleportingParticles() {
 
 TeleportingParticles::~TeleportingParticles() {
     renderSphere = false;
-    delete particleSystem;
+    delete cascade;
 }
 
 void TeleportingParticles::Update(float dt) {
     gui->Update(dt);
+    cascade->Update(dt);
     // NEW:
     eulerIntegrator->Step(dt);
     // ------
-
+    
     // Check if a particle travessed the floor plane. Restart its position if it had
     mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, 1, 0), 0.f)); // DOWN
     mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, -1, 0), 10.f)); // UP
@@ -78,17 +80,19 @@ void TeleportingParticles::Update(float dt) {
     mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(-1, 0, 0), 5.f)); // X POSITIVE
     mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, 0, 1), 5.f)); // Z NEGATIVE
     mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, 0, -1), 5.f)); // Z POSITIVE
-
+    mathematics->CheckCollisionWithCapsule(capsule->GetCenter1(), capsule->GetCenter2(), capsule->GetRadious());
     mathematics->GetSphereCollisionPlane(sphere); // sphere
+    
 
-    for (int i = 0; i < numParticles; i++) {
-        particleSystem->SetParticleLastPosition(i, particleSystem->GetParticlePosition(i));
+    for (int i = 0; i < cascade->_particleSystem->GetParticlesCount(); i++) {
+        cascade->_particleSystem->SetParticleLastPosition(i, cascade->_particleSystem->GetParticlePosition(i));
     }
 }
 
 void TeleportingParticles::RenderUpdate() {
     gui->RenderUpdate();
-    particleSystem->Render();
+    cascade->_particleSystem->Render();
+    
     sphere->DrawSphere_intermediate();
 }
 

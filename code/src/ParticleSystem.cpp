@@ -8,57 +8,44 @@ namespace LilSpheres {
 	extern void updateParticles(int startIdx, int count, float* array_data);
 }
 
-ParticleSystem::ParticleSystem(int numParticles, float elasticity) : maxParticles(numParticles)
+ParticleSystem::ParticleSystem(int numParticles, float elasticity) 
 {
 	//positions = std::vector<glm::vec3>[maxParticles]; // Vector
-	lastPositions = new glm::vec3[maxParticles]; // Array
-	velocity = new glm::vec3[maxParticles];
-	acceleration = new glm::vec3[maxParticles];
-	_active = new bool[maxParticles];
-	_lifeTime = new float[maxParticles];
 	_elasticityCoef = elasticity;
-
+	maxParticles = numParticles;
 	for (int i = 0; i < maxParticles; i++)
 	{
-		positions.push_back(new glm::vec3(0.0f, 0.0f, 0.0f)); // Vector
-		lastPositions[i] = glm::vec3(0.f, 0.f, 0.f); // Array
-		velocity[i] = glm::vec3(0.f, 0.f, 0.f);
-		acceleration[i] = glm::vec3(0.f, 0.f, 0.f);
-		_active[i] = false;
-		_lifeTime[i] = 0;
+		positions.push_back(glm::vec3(0.0f, 0.0f, 0.0f)); // Vector
+		lastPositions.push_back(glm::vec3(0.0f, 0.0f, 0.0f)); // Vector
+		velocity.push_back(glm::vec3(0.f, 0.f, 0.f));
+		acceleration.push_back(glm::vec3(0.f, 0.f, 0.f));
+		_lifeTime.push_back(0);
 	}
 };
 
 ParticleSystem::~ParticleSystem()
 {
 	printf("Destruct the particle system\n");
-
-	for (int i = positions.size(); i < 0; i--)
-	{
-		delete positions[i];
-	}
-
 	positions.clear();
 };
 
-int ParticleSystem::GetNumberOfParticles() {
-	return maxParticles;
-};
+
 
 void ParticleSystem::Render() {
-    int numParticles1 = ((activeParticlesFirstPosition- 1 ) + _activeParticlesCount) % maxParticles;
-	int	numParticles2 = _activeParticlesCount - numParticles1;
+   // int numParticles1 = ((activeParticlesFirstPosition- 1 ) + _activeParticlesCount) % maxParticles;
+	//int	numParticles2 = _activeParticlesCount - numParticles1;
 	
 	LilSpheres::firstParticleIdx = 0;
-	LilSpheres::particleCount = GetNumberOfParticles();
+	LilSpheres::particleCount = positions.size();
 	//LilSpheres::updateParticles(activeParticlesFirstPosition, numParticles1, &(positions[0].x));
 	//LilSpheres::updateParticles(0, numParticles2, &(positions[numParticles1].x));
-	LilSpheres::updateParticles(0, GetNumberOfParticles(), &(positions[0]->x));
+	if(LilSpheres::particleCount>0)
+	LilSpheres::updateParticles(0, LilSpheres::particleCount, &(positions[0].x));
 
 }
 
 void ParticleSystem::SetParticlePosition(int particleId, glm::vec3 position) {
-	positions[particleId] = &position;
+	positions[particleId] = position;
 }
 
 void ParticleSystem::SetParticleLastPosition(int particleId, glm::vec3 position)
@@ -67,7 +54,7 @@ void ParticleSystem::SetParticleLastPosition(int particleId, glm::vec3 position)
 }
 
 glm::vec3 ParticleSystem::GetParticlePosition(int particleId) {
-	return *(positions[particleId]);
+	return (positions[particleId]);
 }
 
 float ParticleSystem::GetParticleElasticity()
@@ -100,20 +87,11 @@ void ParticleSystem::SetLifeTime(int particleId, float lifeTime)
 	_lifeTime[particleId] = lifeTime;
 }
 
-float* ParticleSystem::GetLifeTime(int particleId)
+float ParticleSystem::GetLifeTime(int i)
 {
-	return _lifeTime;
+	return _lifeTime[i];
 }
 
-void ParticleSystem::SetActive(int particleId, bool active)
-{
-	_active[particleId] = active;
-}
-
-bool ParticleSystem::IsActive(int particleId)
-{
-	return _active;
-}
 
 void ParticleSystem::SetActiveParticleFirstPos(int firstPos)
 {
@@ -128,4 +106,28 @@ void ParticleSystem::SetActiveParticleCount(int activeParticleCount)
 void ParticleSystem::SetAcceleration(int particleId, glm::vec3 acc)
 {
 	acceleration[particleId] = acc;
+}
+
+void ParticleSystem::eraseParticle(int i)
+{
+	positions.erase(positions.begin() + i);
+	lastPositions.erase(lastPositions.begin() + i);
+	_lifeTime.erase(_lifeTime.begin() + i);
+	velocity.erase(velocity.begin() + i);
+	acceleration.erase(acceleration.begin() + i);
+}
+
+void ParticleSystem::AddParticle(glm::vec3 startingPos,float lifeTime,glm::vec3 velocityVec)
+{
+	positions.push_back(startingPos);
+	lastPositions.push_back(startingPos);
+	acceleration.push_back(glm::vec3(0.f, -9.8f, 0.f));
+	velocity.push_back(velocityVec);
+	_lifeTime.push_back(lifeTime);
+	
+}
+
+float ParticleSystem::GetParticlesCount()
+{
+	return positions.size();
 }

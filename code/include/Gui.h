@@ -16,6 +16,20 @@ namespace LilSpheres {
 	extern int firstParticleIdx, particleCount;
 	extern void updateParticles(int startIdx, int count, float* array_data);
 }
+namespace cascadeValues {
+	extern int _lifeTime;
+	extern int _emissionRate;
+	extern glm::vec3 _point1;
+	extern glm::vec3 _point2;
+	extern float _angle;
+	extern float _speed;
+}
+
+namespace CapsuleValues {
+	extern glm::vec3 _center1;
+	extern glm::vec3 _center2;
+	extern float _radius;
+}
 
 extern bool renderSphere, renderCapsule, renderParticles;
 
@@ -94,6 +108,30 @@ public:
 				0, // min
 				LilSpheres::maxParticles // max
 			);
+			ImGui::SliderInt(
+				"cascade lifeTime", //label
+				&cascadeValues::_lifeTime, // where the value exists
+				1, // min
+				10 // max
+			);
+			ImGui::SliderFloat(
+				"cascade angle", //label
+				&cascadeValues::_angle, // where the value exists
+				1, // min
+				360 // max
+			);
+			ImGui::SliderFloat(
+				"cascade Initial speed ", //label
+				&cascadeValues::_speed, // where the value exists
+				0.5, // min
+				7.5 // max
+			);
+			ImGui::SliderInt(
+				"cascadeEmissionRate", //label
+				&cascadeValues::_emissionRate, // where the value exists
+				1, // min
+				2000 // max
+			);
 			ImGui::DragInt(
 				"Number of particles", //label
 				&LilSpheres::particleCount, // where the value exists
@@ -101,12 +139,21 @@ public:
 				0, // min
 				LilSpheres::maxParticles // max
 			);
+			
 		}
 
 		if (renderSphere) {
 			ImGui::InputFloat3(
 				"Sphere center",
 				&sphereCenter.x // pointer to an array of 3 floats
+			);
+			ImGui::InputFloat3(
+				"cascade Point1",
+				&cascadeValues::_point1.x // pointer to an array of 3 floats
+			);
+			ImGui::InputFloat3(
+				"cascade Point2",
+				&cascadeValues::_point2.x // pointer to an array of 3 floats
 			);
 
 			ImGui::RadioButton("Move left", &sphereMovement, Movement::LEFT);
@@ -131,6 +178,24 @@ public:
 				&capsuleA.x,
 				-5.f,
 				10.f
+			);
+			ImGui::SliderFloat(
+				"capsule point 1.x", //label
+				&CapsuleValues::_center1.x , // where the value exists
+				1, // min
+				10 // max
+			);
+			ImGui::SliderFloat(
+				"capsule point 1.y", //label
+				&CapsuleValues::_center1.y, // where the value exists
+				1, // min
+				10 // max
+			);
+			ImGui::SliderFloat(
+				"capsule point 1.z", //label
+				&CapsuleValues::_center1.z, // where the value exists
+				1, // min
+				10 // max
 			);
 		}
 	}

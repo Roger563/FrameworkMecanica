@@ -1,5 +1,14 @@
 #pragma once
 #include <glm\glm.hpp>
+
+namespace CapsuleValues {
+
+	glm::vec3 _center1;
+	glm::vec3 _center2;
+	float _radius;
+
+}
+
 class Capsule_intermediate
 {
 private:

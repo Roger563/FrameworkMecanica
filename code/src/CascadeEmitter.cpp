@@ -3,6 +3,8 @@
 CascadeEmitter::CascadeEmitter(float lifeTime, float emissionRate, float elasticity)
 {
 	_particleIndex = 0;
+	_point1 = glm vec3(-5, 9.9, 0);
+	_point1 = glm vec3(5, 9.9, 0);
 	_maxParticles = lifeTime * emissionRate;
 	_lifeTime = lifeTime;
 	_emissionRate = emissionRate;

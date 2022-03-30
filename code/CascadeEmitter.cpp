@@ -1,13 +1,25 @@
 #include "CascadeEmitter.h"
+#include <iostream>
+#include <glm\gtx/rotate_vector.hpp>
 
 CascadeEmitter::CascadeEmitter(float lifeTime, float emissionRate, float elasticity)
 {
+	
 	_particleIndex = 0;
 	_maxParticles = lifeTime * emissionRate;
 	_lifeTime = lifeTime;
 	_emissionRate = emissionRate;
-	_particleSystem = new ParticleSystem(_maxParticles, elasticity);
-	_vect = glm::normalize(_point2 - _point1);
+	cascadeValues::_point1 = glm::vec3(-5,9.9,-5);
+	cascadeValues::_point2 = glm::vec3(5,9.9,5);
+	
+	cascadeValues::_lifeTime = _lifeTime;
+	cascadeValues::_emissionRate = _emissionRate;
+	cascadeValues::_speed = 3;
+	cascadeValues::_angle = 90;
+
+	
+	_particleSystem = new ParticleSystem(5000, elasticity);
+	_vect =(cascadeValues::_point2 - cascadeValues::_point1);
 	_lambda = 0;
 	_firstActiveParticle = 0;
 	_activeParticleCount = 0;
@@ -19,53 +31,46 @@ CascadeEmitter::CascadeEmitter(float lifeTime, float emissionRate, float elastic
 void CascadeEmitter::SpawnParticle()
 {
 	//calculate random pos in the line
-	_lambda = rand() % 1;
-	_spawningPos = glm::vec3(_point1 + (_lambda * _vect));
-	//setup the particle
-	_particleSystem->SetAcceleration(_nextParticleToSpawn, _acceleration);
-	_particleSystem->SetVelocity(_nextParticleToSpawn, _initialVelocity);
-	_particleSystem->SetParticlePosition(_nextParticleToSpawn, _spawningPos);
-	_particleSystem->SetParticleLastPosition(_nextParticleToSpawn, _spawningPos);
-	_particleSystem->SetLifeTime(_nextParticleToSpawn, _lifeTime);
-	//activate
-	_particleSystem->SetActive(_nextParticleToSpawn, true);
-	//we add one to the starting pos
-	_nextParticleToSpawn++;
-	_nextParticleToSpawn = _nextParticleToSpawn % _maxParticles;
-	_activeParticleCount++;
-	_particleSystem->SetActiveParticleCount(_activeParticleCount);
+	_lambda = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 1));;
+	_spawningPos = glm::vec3(cascadeValues::_point1 + (_lambda * _vect));
+	//starting angle
+	glm::vec3 up = glm::vec3(0.f, 1.f, 0.f);
+	glm::vec3 direction = glm::normalize(glm::cross(_vect, up));
+	glm::vec3 velocity = glm::vec3(direction * cascadeValues::_speed);
+	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(), glm::radians(cascadeValues::_angle), glm::normalize(_vect));
+	glm::vec3 velocityVect = glm::vec3(rotationMatrix * glm::vec4(velocity, 0.f));
+	_particleSystem->AddParticle(_spawningPos, cascadeValues::_lifeTime,velocityVect);
+	
 }
 
-void CascadeEmitter::DespawnParticle(int index)
+void CascadeEmitter::DespawnParticle(int i)
 {
-	_activeParticleCount--;
-	_particleSystem->SetActiveParticleCount(_activeParticleCount);
-	_firstActiveParticle++;
-	_firstActiveParticle = _firstActiveParticle % _maxParticles;
-	_particleSystem->SetActiveParticleFirstPos(_firstActiveParticle);
-	//set active false
-	_particleSystem->SetActive(index, false);
+	_particleSystem->eraseParticle(i);
 }
 
 void CascadeEmitter::Update(float dt)
 {
+	std::cout << cascadeValues::_emissionRate << std::endl;
 	//spawn if need it
-	if ( (_lifeTime / _emissionRate)  <= _timeSinceLastemission) {
+	float timer = (1 / (float)cascadeValues::_emissionRate);
+	while (timer  <= _timeSinceLastemission) {
 		SpawnParticle();
-		_timeSinceLastemission = 0;
+		_timeSinceLastemission -= timer;
 	}
 	//despawn
-	for (int i = 0; i < _maxParticles; i++) {
-		if (_particleSystem->IsActive(i)) {
-
-			if (_particleSystem->GetLifeTime(i) <= 0) {
-				DespawnParticle(i);
-			}
-			_particleSystem->SetLifeTime(i, *(_particleSystem->GetLifeTime(i)) + dt);
+	for (int i = _particleSystem->GetParticlesCount()-1; i >= 0;i--) {
+		if (_particleSystem->GetLifeTime(i) <= 0) {
+			DespawnParticle(i);
 		}
 	}
-	//timers
+	for (int i = 0; i < _particleSystem->GetParticlesCount(); i++) {	
+			_particleSystem->SetLifeTime(i, (_particleSystem->GetLifeTime(i)) - dt);
+		}
 	_timeSinceLastemission += dt;
+	_vect = cascadeValues::_point2 - cascadeValues::_point1;
+
 }
+	
+
 
 

@@ -17,6 +17,8 @@ public:
 	bool HasCollidedWithSphere(Sphere_intermediate* sphere, glm::vec3 point);
 	void GetSphereCollisionPlane(Sphere_intermediate* sphere);
 	glm::vec3 Normalize(glm::vec3 vec);
+	void CheckCollisionWithCapsule(glm::vec3 center1, glm::vec3 center2, float radius);
+	void GetCapsuleCollisionPlane(int id, glm::vec3 center1, glm::vec3 center2, float radius);
 private:
 	ParticleSystem* _ps;
 };
