@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 
 #include "Simulator.h";
 #include "Capsule_intermediate.h"
@@ -9,6 +8,8 @@
 #include "Sphere_intermediate.h"
 #include "Gui.h"
 #include "CascadeEmitter.h"
+#include "../Fountain.h"
+
 
 class TeleportingParticles : public Simulator {
 public:
@@ -21,8 +22,10 @@ public:
 	CascadeEmitter* cascade;
 private:
 	Capsule_intermediate* capsule;
-	EulerIntegrator* eulerIntegrator;
+	EulerIntegrator* eulerIntegratorCascade;
+	EulerIntegrator* eulerIntegratorFountain;
 	Mathematics* mathematics;
 	int numParticles;
+	Fountain* fountain;
 	Gui* gui;
 };

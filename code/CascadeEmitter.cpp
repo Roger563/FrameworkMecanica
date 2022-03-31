@@ -25,6 +25,7 @@ CascadeEmitter::CascadeEmitter(float lifeTime, float emissionRate, float elastic
 	_activeParticleCount = 0;
 	_timeSinceLastemission = 0;
 	_nextParticleToSpawn = 0;
+	active = false;
 
 }
 
@@ -50,7 +51,6 @@ void CascadeEmitter::DespawnParticle(int i)
 
 void CascadeEmitter::Update(float dt)
 {
-	std::cout << cascadeValues::_emissionRate << std::endl;
 	//spawn if need it
 	float timer = (1 / (float)cascadeValues::_emissionRate);
 	while (timer  <= _timeSinceLastemission) {
@@ -69,6 +69,11 @@ void CascadeEmitter::Update(float dt)
 	_timeSinceLastemission += dt;
 	_vect = cascadeValues::_point2 - cascadeValues::_point1;
 
+}
+
+void CascadeEmitter::ToggleActive()
+{
+	active = !active;
 }
 	
 

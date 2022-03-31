@@ -44,7 +44,7 @@ void GUI() {
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("Simulation")) {
 			if (ImGui::MenuItem("RandomStaticParticles")) { setSimulation(EnabledSimulation::RANDOM_STATIC_PARTICLES); };
-			if (ImGui::MenuItem("TeleportingParticles")) { setSimulation(EnabledSimulation::TELEPORTING_PARTICLES); };
+			if (ImGui::MenuItem("AA2")) { setSimulation(EnabledSimulation::TELEPORTING_PARTICLES); };
 
 			ImGui::EndMenu();
 		}

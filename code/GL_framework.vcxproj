@@ -135,6 +135,7 @@ xcopy $(ProjectDir)libs\SDL2.dll $(OutDir) /y /d</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CascadeEmitter.cpp" />
+    <ClCompile Include="Fountain.cpp" />
     <ClCompile Include="src\Capsule_intermediate.cpp" />
     <ClCompile Include="src\Gui.cpp" />
     <ClCompile Include="src\Sphere_intermediate.cpp" />
@@ -155,6 +156,7 @@ xcopy $(ProjectDir)libs\SDL2.dll $(OutDir) /y /d</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CascadeEmitter.h" />
+    <ClInclude Include="Fountain.h" />
     <ClInclude Include="include\Capsule_intermediate.h" />
     <ClInclude Include="include\Gui.h" />
     <ClInclude Include="include\EulerIntegrator.h" />

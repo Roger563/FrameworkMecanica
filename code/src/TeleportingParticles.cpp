@@ -1,7 +1,7 @@
 #include <glm\glm.hpp>
 #include "TeleportingParticles.h";
 
-#define ELASTICITY 0.1f
+#define ELASTICITY 0.3f
 #define ACCELERATION_X 0.f
 #define ACCELERATION_Y -9.8f
 #define ACCELERATION_Z 0.f
@@ -36,13 +36,15 @@ TeleportingParticles::TeleportingParticles() {
     
     renderSphere = true;
     numParticles = 1000;
-
     cascade = new CascadeEmitter(1,1,ELASTICITY);
-    eulerIntegrator = new EulerIntegrator(cascade->_particleSystem);
-    mathematics = new Mathematics(cascade->_particleSystem);
-    capsule = new Capsule_intermediate(glm::vec3(-5, 5, 0), glm::vec3(5, 5, 0),2.0f);
+    eulerIntegratorCascade = new EulerIntegrator(cascade->_particleSystem);
+    
+    mathematics = new Mathematics();
+    capsule = new Capsule_intermediate(glm::vec3(-5, 5, 0), glm::vec3(0, 0, 0),1.0f);
     sphere = new Sphere_intermediate(glm::vec3(1, 5, 0), 2.f);
-    gui = new Gui(sphere);
+    fountain = new Fountain(2, 200, 5, ELASTICITY);
+    eulerIntegratorFountain = new EulerIntegrator(fountain->particleSystem);
+    gui = new Gui(sphere,capsule,fountain);
     // NEW:
     for (int i = 0; i < numParticles; i++) {
        // cascade->_particleSystem->SetVelocity(i, glm::vec3(0.0f, 0.0f, 0.0f));
@@ -69,30 +71,50 @@ TeleportingParticles::~TeleportingParticles() {
 void TeleportingParticles::Update(float dt) {
     gui->Update(dt);
     cascade->Update(dt);
+    fountain->Update(dt);
     // NEW:
-    eulerIntegrator->Step(dt);
+    eulerIntegratorCascade->Step(dt);
+    eulerIntegratorFountain->Step(dt);
     // ------
     
-    // Check if a particle travessed the floor plane. Restart its position if it had
-    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, 1, 0), 0.f)); // DOWN
-    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, -1, 0), 10.f)); // UP
-    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(1, 0, 0), 5.f)); // X NEGATIVE
-    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(-1, 0, 0), 5.f)); // X POSITIVE
-    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, 0, 1), 5.f)); // Z NEGATIVE
-    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, 0, -1), 5.f)); // Z POSITIVE
-    mathematics->CheckCollisionWithCapsule(capsule->GetCenter1(), capsule->GetCenter2(), capsule->GetRadious());
-    mathematics->GetSphereCollisionPlane(sphere); // sphere
-    
-
+    //Cascade
+    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, 1, 0), 0.f),cascade->_particleSystem); // DOWN
+    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, -1, 0), 10.f),cascade->_particleSystem); // UP
+    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(1, 0, 0), 5.f),cascade->_particleSystem); // X NEGATIVE
+    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(-1, 0, 0), 5.f),cascade->_particleSystem); // X POSITIVE
+    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, 0, 1), 5.f),cascade->_particleSystem); // Z NEGATIVE
+    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, 0, -1), 5.f),cascade->_particleSystem); // Z POSITIVE
+    if (capsule->active) {
+        mathematics->CheckCollisionWithCapsule(capsule->GetCenter1(), capsule->GetCenter2(), capsule->GetRadious(), cascade->_particleSystem);
+    }
+    mathematics->GetSphereCollisionPlane(sphere, cascade->_particleSystem); // sphere
     for (int i = 0; i < cascade->_particleSystem->GetParticlesCount(); i++) {
         cascade->_particleSystem->SetParticleLastPosition(i, cascade->_particleSystem->GetParticlePosition(i));
+    }
+    //Fountain
+    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, 1, 0), 0.f), fountain->particleSystem); // DOWN
+    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, -1, 0), 10.f), fountain->particleSystem); // UP
+    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(1, 0, 0), 5.f), fountain->particleSystem); // X NEGATIVE
+    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(-1, 0, 0), 5.f), fountain->particleSystem); // X POSITIVE
+    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, 0, 1), 5.f), fountain->particleSystem); // Z NEGATIVE
+    mathematics->CheckCollisionWithPlane(new Plane(glm::vec3(0, 0, -1), 5.f), fountain->particleSystem); // Z POSITIVE
+    if (capsule->active) {
+        mathematics->CheckCollisionWithCapsule(capsule->GetCenter1(), capsule->GetCenter2(), capsule->GetRadious(), fountain->particleSystem);
+    }
+    mathematics->GetSphereCollisionPlane(sphere, fountain->particleSystem); // sphere
+    for (int i = 0; i < fountain->particleSystem->GetParticlesCount(); i++) {
+        fountain->particleSystem->SetParticleLastPosition(i, fountain->particleSystem->GetParticlePosition(i));
     }
 }
 
 void TeleportingParticles::RenderUpdate() {
     gui->RenderUpdate();
-    cascade->_particleSystem->Render();
-    
+    if (!fountain->active) {
+        cascade->_particleSystem->Render();
+    }
+    else {
+        fountain->particleSystem->Render();
+    }
     sphere->DrawSphere_intermediate();
 }
 

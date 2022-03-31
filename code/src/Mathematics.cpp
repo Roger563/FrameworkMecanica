@@ -1,9 +1,8 @@
 #include "Mathematics.h"
 
 
-Mathematics::Mathematics(ParticleSystem* ps)
+Mathematics::Mathematics()
 {
-    _ps = ps;
 }
 
 Plane* Mathematics::GetPlane(glm::vec3 point, glm::vec3 normal)
@@ -16,17 +15,17 @@ Plane* Mathematics::GetPlane(glm::vec3 point, glm::vec3 vec1, glm::vec3 vec2)
     return nullptr;
 }
 
-void Mathematics::CheckCollisionWithPlane(Plane* plane)
+void Mathematics::CheckCollisionWithPlane(Plane* plane,ParticleSystem* _ps)
 {
     for (int i = 0; i < _ps->GetParticlesCount(); i++)
     {
         if ( ((glm::dot(plane->GetNormal(), _ps->GetParticleLastPosition(i)) + plane->GetD()) *(glm::dot(plane->GetNormal(), _ps->GetParticlePosition(i)) + plane->GetD()) ) <= 0){
-            Collide(plane,i);
+            Collide(plane,i,_ps);
         }
     }
 }
 
-void Mathematics::Collide(Plane* plane, int index)
+void Mathematics::Collide(Plane* plane, int index,ParticleSystem* _ps)
 {
     _ps->SetParticlePosition(index, _ps->GetParticlePosition(index) - (1 + _ps->GetParticleElasticity()) * (glm::dot(plane->GetNormal(), _ps->GetParticlePosition(index)) + plane->GetD()) * plane->GetNormal());
     _ps->SetVelocity( index,_ps->GetParticleVelocity(index)-(1+_ps->GetParticleElasticity())*(glm::dot(plane->GetNormal(),_ps->GetParticleVelocity(index)))* plane->GetNormal());
@@ -39,7 +38,7 @@ bool Mathematics::HasCollidedWithSphere(Sphere_intermediate* sphere, glm::vec3 p
     return magnitude < sphere->GetRadius();;
 }
 
-void Mathematics::GetSphereCollisionPlane(Sphere_intermediate* sphere)
+void Mathematics::GetSphereCollisionPlane(Sphere_intermediate* sphere, ParticleSystem* _ps)
 {
     if (sphere->active) {
         for (int i = 0; i < _ps->GetParticlesCount(); i++)
@@ -75,7 +74,7 @@ void Mathematics::GetSphereCollisionPlane(Sphere_intermediate* sphere)
                 glm::vec3 planeNormal = Normalize((intersectionPoint - sphere->GetPosition()));
                 //collision plane
                 Plane* plane = GetPlane(intersectionPoint, planeNormal);
-                Collide(plane, i);
+                Collide(plane, i,_ps);
             }
         }
     }
@@ -88,7 +87,7 @@ glm::vec3 Mathematics::Normalize(glm::vec3 vec)
     return normalizedVec;
 }
 
-void Mathematics::CheckCollisionWithCapsule(glm::vec3 center1, glm::vec3 center2, float radius)
+void Mathematics::CheckCollisionWithCapsule(glm::vec3 center1, glm::vec3 center2, float radius, ParticleSystem* _ps)
 {
     for (int i = 0; i < _ps->GetParticlesCount(); i++) {
 
@@ -100,12 +99,12 @@ void Mathematics::CheckCollisionWithCapsule(glm::vec3 center1, glm::vec3 center2
         glm::vec3 ClosestPoint = glm::vec3(center1.x + lamda * capsuleCenterVector.x, center1.y + lamda * capsuleCenterVector.y, center1.z + lamda * capsuleCenterVector.z);
 
         if (glm::length(ClosestPoint-particlePos) < radius) {
-            GetCapsuleCollisionPlane(i,center1,center2,radius);
+            GetCapsuleCollisionPlane(i,center1,center2,radius,_ps);
         }
     }
 }
 
-void Mathematics::GetCapsuleCollisionPlane(int id, glm::vec3 center1, glm::vec3 center2, float radius)
+void Mathematics::GetCapsuleCollisionPlane(int id, glm::vec3 center1, glm::vec3 center2, float radius, ParticleSystem* _ps)
 {
     glm::vec3 capsuleCenterVector = center2 - center1;
     glm::vec3 normal = glm::normalize(capsuleCenterVector);
@@ -116,39 +115,31 @@ void Mathematics::GetCapsuleCollisionPlane(int id, glm::vec3 center1, glm::vec3 
     lamda = glm::clamp(lamda, 0.f, 1.f);
     //check if is outside the cylinder
     if (lamda > 0.99f) {
-        GetSphereCollisionPlane(new Sphere_intermediate(center2,radius));
+        GetSphereCollisionPlane(new Sphere_intermediate(center2,radius),_ps);
     }
     else if (lamda < 0.01f) {
-        GetSphereCollisionPlane(new Sphere_intermediate(center1, radius));
+        GetSphereCollisionPlane(new Sphere_intermediate(center1, radius),_ps);
     }
     else{
         //collision with cilinder
-        glm::vec3 pointInBetween= ((_ps->GetParticlePosition(id) + _ps->GetParticleLastPosition(id)) / 2.0f);
+        float length;
+        int counter=5;
+        glm::vec3 pointInBetween;
         glm::vec3 Pos1 = _ps->GetParticlePosition(id);
         glm::vec3 Pos2 = _ps->GetParticleLastPosition(id);
-        while(!(glm::distance(pointInBetween,closestPoint)>radius-0.2 && glm::distance(pointInBetween, closestPoint) < radius + 0.2)){
+        do {
+            length = glm::length(pointInBetween - closestPoint);
+            pointInBetween = ((_ps->GetParticlePosition(id) + _ps->GetParticleLastPosition(id)) / 2.0f);
 
-            if (glm::distance(pointInBetween, closestPoint) > radius + 0.2) {
-                Pos2 = ( ((Pos1 + Pos2) / 2.0f) );
-                if (glm::distance(Pos2, closestPoint) > radius + 0.2) {
-                    pointInBetween = Pos2;
-                }
-                else {
-                    pointInBetween = Pos1;
-                }
+            if ( length> radius + 0.2) {
+                Pos2 = pointInBetween;
             }
             else {
-                Pos1 = Pos2 + ( ((Pos1 + Pos2) / 2.0f) );
-                if (glm::distance(Pos1, closestPoint) > radius + 0.2) {
-                    pointInBetween = Pos1;
-                }
-                else {
-                    pointInBetween = Pos2;
-                }
+                Pos1 = pointInBetween;
             }
-           
-        }
-        Collide(GetPlane(pointInBetween,(pointInBetween - closestPoint)), id);
+            counter--;
+        } while (!glm::abs(length-radius)< 0.2 && counter>0);
+        Collide(GetPlane(pointInBetween,(pointInBetween - closestPoint)), id,_ps);
     }
     
 

@@ -33,11 +33,13 @@ private:
 	float _lifeTime;
 
 public:
+	bool active;
 	ParticleSystem* _particleSystem;
 	CascadeEmitter(float lifeTime, float emissionRate, float elasticity);
 	void SpawnParticle();
 	void DespawnParticle(int i);
 	void Update(float dt);
+	void ToggleActive();
 
 };
 

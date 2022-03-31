@@ -1,13 +1,7 @@
 #pragma once
 #include <glm\glm.hpp>
 
-namespace CapsuleValues {
 
-	glm::vec3 _center1;
-	glm::vec3 _center2;
-	float _radius;
-
-}
 
 class Capsule_intermediate
 {
@@ -23,6 +17,6 @@ public:
 	glm::vec3 GetCenter1();
 	glm::vec3 GetCenter2();
 	float GetRadious();
-	void Update(glm::vec3 center2);
+	void Update(glm::vec3 center1, glm::vec3 center2);
 };
 
