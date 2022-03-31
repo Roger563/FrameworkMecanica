@@ -18,13 +18,13 @@ void Fountain::SpawnParticle()
 {
 	//random dir
 	glm::vec3 angle;
-	if (rand() % 2 == 0) { angle.x = (rand() % _apertureAngle);}
+	if (rand() % 2 == 1) { angle.x = (rand() % _apertureAngle);}
 	else{ angle.x = -(rand() % _apertureAngle); }
 
-	if (rand() % 2 == 0) { angle.y = (rand() % _apertureAngle); }
+	if (rand() % 2 == 1) { angle.y = (rand() % _apertureAngle); }
 	else { angle.y = -(rand() % _apertureAngle); }
 
-	if (rand() % 2 == 0) { angle.z = (rand() % _apertureAngle); }
+	if (rand() % 2 == 1) { angle.z = (rand() % _apertureAngle); }
 	else { angle.z = -(rand() % _apertureAngle); }
 
 	glm::vec3 particleDir = _directionVector;
