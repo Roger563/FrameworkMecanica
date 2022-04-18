@@ -36,7 +36,7 @@ TeleportingParticles::TeleportingParticles() {
     
     renderSphere = true;
     numParticles = 1000;
-    cascade = new CascadeEmitter(1,1,ELASTICITY);
+    cascade = new CascadeEmitter(2,500,ELASTICITY);
     eulerIntegratorCascade = new EulerIntegrator(cascade->_particleSystem);
     
     mathematics = new Mathematics();
@@ -65,7 +65,10 @@ TeleportingParticles::TeleportingParticles() {
 
 TeleportingParticles::~TeleportingParticles() {
     renderSphere = false;
+    renderCapsule = false;
     delete cascade;
+    delete fountain;
+    extern bool renderParticles; renderParticles = false;
 }
 
 void TeleportingParticles::Update(float dt) {

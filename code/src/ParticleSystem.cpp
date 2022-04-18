@@ -21,7 +21,23 @@ ParticleSystem::ParticleSystem(int numParticles, float elasticity)
 		acceleration.push_back(glm::vec3(0.f, 0.f, 0.f));
 		_lifeTime.push_back(0);
 	}
-};
+}
+ParticleSystem::ParticleSystem(int numParticles, float elasticity, float mass)
+{
+	//positions = std::vector<glm::vec3>[maxParticles]; // Vector
+	_elasticityCoef = elasticity;
+	maxParticles = numParticles;
+	for (int i = 0; i < maxParticles; i++)
+	{
+		positions.push_back(glm::vec3(0.0f, 0.0f, 0.0f)); // Vector
+		lastPositions.push_back(glm::vec3(0.0f, 0.0f, 0.0f)); // Vector
+		velocity.push_back(glm::vec3(0.f, 0.f, 0.f));
+		acceleration.push_back(glm::vec3(0.f, 0.f, 0.f));
+		_lifeTime.push_back(0);
+	}
+	_particleMass = mass;
+}
+;
 
 ParticleSystem::~ParticleSystem()
 {
@@ -65,6 +81,11 @@ float ParticleSystem::GetParticleElasticity()
 glm::vec3 ParticleSystem::GetParticleLastPosition(int particleId)
 {
 	return lastPositions[particleId];
+}
+
+std::vector<glm::vec3> ParticleSystem::GetPositions()
+{
+	return positions;
 }
 
 glm::vec3 ParticleSystem::GetParticleVelocity(int particleId)
@@ -130,4 +151,9 @@ void ParticleSystem::AddParticle(glm::vec3 startingPos,float lifeTime,glm::vec3 
 float ParticleSystem::GetParticlesCount()
 {
 	return positions.size();
+}
+
+float ParticleSystem::GetMass()
+{
+	return _particleMass;
 }

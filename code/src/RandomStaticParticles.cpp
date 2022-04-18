@@ -50,5 +50,6 @@ void RandomStaticParticles::RenderUpdate() {
 RandomStaticParticles::~RandomStaticParticles(){
 	printf("Destruct the random static particles\n");
 	delete particles;
+	extern bool renderParticles; renderParticles = false;
 }
 

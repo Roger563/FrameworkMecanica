@@ -6,7 +6,8 @@
 
 class ParticleSystem {
 public:
-	ParticleSystem(int maxParticles,float elasticity);
+	ParticleSystem(int numParticles,float elasticity);
+	ParticleSystem(int numParticles,float elasticity,float mass);
 	~ParticleSystem();
 
 	void Render();
@@ -15,6 +16,7 @@ public:
 	glm::vec3 GetParticlePosition(int particleId);
 	float GetParticleElasticity();
 	glm::vec3 GetParticleLastPosition(int particleId);
+	std::vector<glm::vec3> GetPositions();
 	glm::vec3 GetParticleVelocity(int particleId);
 	glm::vec3 GetParticleAcceleration(int particleId);
 	void SetVelocity(int particleId, glm::vec3 vel);
@@ -28,11 +30,12 @@ public:
 	void eraseParticle(int i);
 	void AddParticle(glm::vec3 startingPos,float lifeTime, glm::vec3 velocityVec);
 	float GetParticlesCount();
+	float GetMass();
 private:
 	int maxParticles;
 	int _activeParticlesCount;
 	int activeParticlesFirstPosition;
-
+	float _particleMass;
 	std::vector<glm::vec3> positions;
 	std::vector<glm::vec3> lastPositions;
 	std::vector<float> _lifeTime;

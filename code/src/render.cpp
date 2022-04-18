@@ -3,6 +3,7 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include <cstdio>
 #include <cassert>
+#include <vector>
 
 #include "GL_framework.h"
 
@@ -726,8 +727,8 @@ GLuint clothVao;
 GLuint clothVbo[2];
 GLuint clothShaders[2];
 GLuint clothProgram;
-extern const int numCols = 14;
-extern const int numRows = 18;
+extern const int numCols = 18;
+extern const int numRows = 14;
 extern const int numVerts = numRows * numCols;
 int numVirtualVerts;
 
@@ -794,11 +795,14 @@ void cleanupClothMesh() {
 	glDeleteShader(clothShaders[0]);
 	glDeleteShader(clothShaders[1]);
 }
-void updateClothMesh(float *array_data) {
+void updateClothMesh(std::vector<glm::vec3> array_data) {
 	glBindBuffer(GL_ARRAY_BUFFER, clothVbo[0]);
 	float* buff = (float*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-	for (int i = 0; i < 3 * numVerts; ++i) {
-		buff[i] = array_data[i];
+	for (int j = 0; j < array_data.size(); j++) {
+		for (int i = 0; i < 3; ++i) {
+			buff[j*3+i] = array_data[j][i];
+
+		}
 	}
 	glUnmapBuffer(GL_ARRAY_BUFFER);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

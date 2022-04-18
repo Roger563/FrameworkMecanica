@@ -134,8 +134,10 @@ xcopy $(ProjectDir)libs\SDL2.dll $(OutDir) /y /d</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Cape.cpp" />
     <ClCompile Include="CascadeEmitter.cpp" />
     <ClCompile Include="Fountain.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Capsule_intermediate.cpp" />
     <ClCompile Include="src\Gui.cpp" />
     <ClCompile Include="src\Sphere_intermediate.cpp" />
@@ -153,8 +155,10 @@ xcopy $(ProjectDir)libs\SDL2.dll $(OutDir) /y /d</Command>
     <ClCompile Include="src\render.cpp" />
     <ClCompile Include="src\render_prims.cpp" />
     <ClCompile Include="src\TeleportingParticles.cpp" />
+    <ClCompile Include="VerletIntegrator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Cape.h" />
     <ClInclude Include="CascadeEmitter.h" />
     <ClInclude Include="Fountain.h" />
     <ClInclude Include="include\Capsule_intermediate.h" />
@@ -167,6 +171,8 @@ xcopy $(ProjectDir)libs\SDL2.dll $(OutDir) /y /d</Command>
     <ClInclude Include="include\Plane.h" />
     <ClInclude Include="include\Mathematics.h" />
     <ClInclude Include="include\Sphere_intermediate.h" />
+    <ClInclude Include="include\Mesh.h" />
+    <ClInclude Include="VerletIntegrator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,12 +4,14 @@
 
 #include "RandomStaticParticles.h"
 #include "TeleportingParticles.h"
+#include "../Cape.h"
 
 
 #pragma region simulationSelection
 enum class EnabledSimulation {
 	RANDOM_STATIC_PARTICLES,
 	TELEPORTING_PARTICLES,
+	CAPE
 };
 
 Simulator* currentSimulator;
@@ -32,6 +34,10 @@ void setSimulation(EnabledSimulation simulation) {
 			currentSimulator = new TeleportingParticles();
 			break;
 		;;
+		case EnabledSimulation::CAPE:
+			printf("Start the teleporting particles");
+			currentSimulator = new Cape();
+			break;
 	}
 }
 #pragma endregion
@@ -44,7 +50,8 @@ void GUI() {
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("Simulation")) {
 			if (ImGui::MenuItem("RandomStaticParticles")) { setSimulation(EnabledSimulation::RANDOM_STATIC_PARTICLES); };
-			if (ImGui::MenuItem("AA2")) { setSimulation(EnabledSimulation::TELEPORTING_PARTICLES); };
+			if (ImGui::MenuItem("AA2 - Emitter & Collisions")) { setSimulation(EnabledSimulation::TELEPORTING_PARTICLES); };
+			if (ImGui::MenuItem("AA3 - Falling Cape")) { setSimulation(EnabledSimulation::CAPE); };
 
 			ImGui::EndMenu();
 		}
