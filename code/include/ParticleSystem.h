@@ -6,7 +6,9 @@
 
 class ParticleSystem {
 public:
+	
 	ParticleSystem(int numParticles,float elasticity);
+	ParticleSystem();
 	ParticleSystem(int numParticles,float elasticity,float mass);
 	~ParticleSystem();
 
@@ -27,11 +29,17 @@ public:
 	void SetActiveParticleFirstPos(int firstPos);
 	void SetActiveParticleCount(int activeParticleCount);
 	void SetAcceleration(int particleId, glm::vec3 acc);
+	void AddAcceleration(int particleId, glm::vec3 acc);
 	void eraseParticle(int i);
 	void AddParticle(glm::vec3 startingPos,float lifeTime, glm::vec3 velocityVec);
+	void ApplyForce(int particleId, glm::vec3 force);
 	float GetParticlesCount();
 	float GetMass();
+	void fixParticle(int particleId);
+	bool isStatic(int particleId);
+	void AddVelocity(int particleId, glm::vec3 vel);
 private:
+	std::vector<bool> fixed;
 	int maxParticles;
 	int _activeParticlesCount;
 	int activeParticlesFirstPosition;

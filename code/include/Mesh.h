@@ -1,7 +1,7 @@
 #pragma once
 #include "Simulator.h"
 #include <glm\glm.hpp>
-#include "ParticleSystem.h"
+#include "../SpringsController.h"
 extern bool renderCloth;
 namespace ClothMesh {
 	extern void updateClothMesh(std::vector<glm::vec3> array_data);
@@ -14,10 +14,12 @@ class Mesh
 	
 public:
 	ParticleSystem* _particleSystem;
+	SpringsController* springController;
 	Mesh();
 
 	void Update(float dt);
 	void setInitialPos();
+	void setSprings();
 	void RenderUpdate();
 	void RenderGui();
 	int GetIndex(int row, int col);

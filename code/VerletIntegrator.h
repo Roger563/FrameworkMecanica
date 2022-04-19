@@ -10,6 +10,7 @@ class VerletIntegrator
 private:
 	Mesh* _mesh;
 	glm::vec3 _force;
+	float _damping = 0.95;
 
 public:
 	VerletIntegrator(Mesh* mesh);
@@ -18,5 +19,6 @@ public:
 
 	void Verlet(float dt);
 	glm::vec3 CalculateNextPos(int index, float dt);
+	glm::vec3 CalculateVelocity(int index, float dt);
 };
 

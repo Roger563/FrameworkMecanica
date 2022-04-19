@@ -134,6 +134,8 @@ xcopy $(ProjectDir)libs\SDL2.dll $(OutDir) /y /d</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="spring.cpp" />
+    <ClCompile Include="src\SpringsController.cpp" />
     <ClCompile Include="src\Cape.cpp" />
     <ClCompile Include="CascadeEmitter.cpp" />
     <ClCompile Include="Fountain.cpp" />
@@ -172,6 +174,8 @@ xcopy $(ProjectDir)libs\SDL2.dll $(OutDir) /y /d</Command>
     <ClInclude Include="include\Mathematics.h" />
     <ClInclude Include="include\Sphere_intermediate.h" />
     <ClInclude Include="include\Mesh.h" />
+    <ClInclude Include="spring.h" />
+    <ClInclude Include="include\SpringsController.h" />
     <ClInclude Include="VerletIntegrator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

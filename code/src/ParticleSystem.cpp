@@ -15,6 +15,22 @@ ParticleSystem::ParticleSystem(int numParticles, float elasticity)
 	maxParticles = numParticles;
 	for (int i = 0; i < maxParticles; i++)
 	{
+		fixed.push_back(false);
+		positions.push_back(glm::vec3(0.0f, 0.0f, 0.0f)); // Vector
+		lastPositions.push_back(glm::vec3(0.0f, 0.0f, 0.0f)); // Vector
+		velocity.push_back(glm::vec3(0.f, 0.f, 0.f));
+		acceleration.push_back(glm::vec3(0.f, 0.f, 0.f));
+		_lifeTime.push_back(0);
+	}
+}
+ParticleSystem::ParticleSystem()
+{
+	//positions = std::vector<glm::vec3>[maxParticles]; // Vector
+	_elasticityCoef = 0;
+	maxParticles = 0;
+	for (int i = 0; i < maxParticles; i++)
+	{
+		fixed.push_back(false);
 		positions.push_back(glm::vec3(0.0f, 0.0f, 0.0f)); // Vector
 		lastPositions.push_back(glm::vec3(0.0f, 0.0f, 0.0f)); // Vector
 		velocity.push_back(glm::vec3(0.f, 0.f, 0.f));
@@ -29,6 +45,7 @@ ParticleSystem::ParticleSystem(int numParticles, float elasticity, float mass)
 	maxParticles = numParticles;
 	for (int i = 0; i < maxParticles; i++)
 	{
+		fixed.push_back(false);
 		positions.push_back(glm::vec3(0.0f, 0.0f, 0.0f)); // Vector
 		lastPositions.push_back(glm::vec3(0.0f, 0.0f, 0.0f)); // Vector
 		velocity.push_back(glm::vec3(0.f, 0.f, 0.f));
@@ -129,6 +146,11 @@ void ParticleSystem::SetAcceleration(int particleId, glm::vec3 acc)
 	acceleration[particleId] = acc;
 }
 
+void ParticleSystem::AddAcceleration(int particleId, glm::vec3 acc)
+{
+	acceleration[particleId] += acc;
+}
+
 void ParticleSystem::eraseParticle(int i)
 {
 	positions.erase(positions.begin() + i);
@@ -148,6 +170,12 @@ void ParticleSystem::AddParticle(glm::vec3 startingPos,float lifeTime,glm::vec3 
 	
 }
 
+void ParticleSystem::ApplyForce(int particleId, glm::vec3 force)
+{
+	glm::vec3 acceleration = force / _particleMass;
+	AddAcceleration(particleId, acceleration);
+}
+
 float ParticleSystem::GetParticlesCount()
 {
 	return positions.size();
@@ -156,4 +184,19 @@ float ParticleSystem::GetParticlesCount()
 float ParticleSystem::GetMass()
 {
 	return _particleMass;
+}
+
+void ParticleSystem::fixParticle(int particleId)
+{
+	fixed[particleId] = true;
+}
+
+bool ParticleSystem::isStatic(int particleId)
+{
+	return fixed[particleId];
+}
+
+void ParticleSystem::AddVelocity(int particleId, glm::vec3 vel)
+{
+	velocity[particleId] += vel;
 }
