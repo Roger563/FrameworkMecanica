@@ -4,12 +4,28 @@ Cape::Cape()
 {
 	mesh = new Mesh();
 	_verletIntegrator = VerletIntegrator(mesh);
+	_step = 5;
+	
+	renderSphere = true;
+}
+
+Cape::~Cape()
+{
+	delete mesh;
+	renderSphere = false;
 }
 
 void Cape::Update(float dt)
 {
-	mesh->Update(dt);
-	_verletIntegrator.Verlet(dt);
+	//reset acceleration
+	
+	for (int i = 0; i < _step; i++) {
+
+		mesh->Update(dt / _step);
+		_verletIntegrator.Verlet(dt / _step);
+	}
+	
+	
 }
 
 void Cape::RenderUpdate()
