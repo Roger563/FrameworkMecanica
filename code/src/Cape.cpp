@@ -35,4 +35,5 @@ void Cape::RenderUpdate()
 
 void Cape::RenderGui()
 {
+	mesh->RenderGui();
 }

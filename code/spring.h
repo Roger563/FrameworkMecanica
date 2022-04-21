@@ -12,12 +12,13 @@ class spring
 	int _particle2Index;
 	float _restLength;
 	float _k;
+	float _damping;
 	glm::vec3 _force;
 	ParticleSystem *_particleSystem;
 	
 
 public:
-	spring(int particle1Index, int particle2Index,float restingLength, ParticleSystem* particleSystem,float k);
+	spring(int particle1Index, int particle2Index,float restingLength, ParticleSystem* particleSystem,float k,float damping);
 	void UpdateSpring();
 };
 

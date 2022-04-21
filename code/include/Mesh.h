@@ -18,14 +18,26 @@ class Mesh
 	Mesh* mesh;
 	Sphere_intermediate* _sphere;
 	Mathematics* mathematics;
+	float _kStructural;
+	float _kBending;
+	float _kShear;
+
+	float _dStructural;
+	float _dBending;
+	float _dShear;
+
+	float _structuralRestLength;
+	float _shearRestLength;
+	float _bendingRestLength;
 public:
 	ParticleSystem* _particleSystem;
 	SpringsController* springController;
 	Mesh();
 
+	void Reset();
 	void Update(float dt);
 	void setInitialPos();
-	void setSprings();
+	void setSprings(bool structural,bool shear,bool bending);
 	void RenderUpdate();
 	void RenderGui();
 	int GetIndex(int row, int col);

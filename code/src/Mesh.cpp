@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include <imgui/imgui.h>
 Mesh::Mesh() {
 	_particleSystem = new ParticleSystem(500,0.6f,1);
 	renderCloth = true;
@@ -6,14 +7,35 @@ Mesh::Mesh() {
 	//set initial pos
 	_timer = 0;
 	_sphere = new Sphere_intermediate(glm::vec3(0,0,0), 2);
+	_kStructural = 5000;
+	_kBending= 5000;
+	_kShear=5000;
+
+	_dStructural = 20;
+	_dBending = 20;
+	_dShear = 20;
+
+	_shearRestLength = glm::sqrt(0.5f);
+	_structuralRestLength = 0.5f;
+	_bendingRestLength = 1;
 	setInitialPos();
-	setSprings();
+	setSprings(true,true,true);
+	
+}
+
+void Mesh::Reset()
+{
+	setInitialPos();
+	bool tempStructural = springController->_structuralSpringsEnabled;
+	bool tempShear= springController->_shearSpringsEnabled;
+	bool tempBending= springController->_bendingSpringsEnabled;
+	setSprings(tempStructural,tempShear,tempBending);
 }
 
 void Mesh::Update(float dt)
 {
-	if (_timer >= 20) {
-		setInitialPos();
+	if (_timer >= 5) {
+		Reset();
 		_timer = 0;
 	}
 	for (int row = 0; row < ClothMesh::numRows; row++) {
@@ -65,51 +87,49 @@ void Mesh::setInitialPos()
 	_particleSystem->fixParticle(GetIndex(0, ClothMesh::numCols-1));
 }
 
-void Mesh::setSprings()
+void Mesh::setSprings(bool structural, bool shear, bool bending)
 {
 	std::vector<spring> tempStructural;
 	std::vector<spring> tempBending;
 	std::vector<spring> tempShear;
-	float k = 800;
 	bool doBendingHorizontal = true;
 	bool doBendingVertical = true;
-	float structuralRestLength = glm::length((_particleSystem->GetParticlePosition(GetIndex(0, 0)) - _particleSystem->GetParticlePosition(GetIndex(0, 1))));
-	float ShearRestLength = glm::length((_particleSystem->GetParticlePosition(GetIndex(0,0)) - _particleSystem->GetParticlePosition(GetIndex(1,1))));
-	float bendingRestLength = glm::length((_particleSystem->GetParticlePosition(GetIndex(0, 0)) - _particleSystem->GetParticlePosition(GetIndex(0, 2))));
 	for (int row = 0; row < ClothMesh::numRows; row++) {
 		for (int col = 0; col < ClothMesh::numCols; col++) {
 
 			//Structural
 			if (col < ClothMesh::numCols - 1) {
-				tempStructural.push_back(spring(GetIndex(row, col), GetIndex(row, col + 1),structuralRestLength,_particleSystem,k));
+				tempStructural.push_back(spring(GetIndex(row, col), GetIndex(row, col + 1),_structuralRestLength,_particleSystem, _kStructural, _dStructural));
 			}
 
 			if (row < ClothMesh::numRows - 1) {
-				tempStructural.push_back(spring(GetIndex(row, col), GetIndex(row+1, col), structuralRestLength, _particleSystem,k));
+				tempStructural.push_back(spring(GetIndex(row, col), GetIndex(row+1, col), _structuralRestLength, _particleSystem, _kStructural, _dStructural));
 			}
 			
 			//Shear
 			if (row < ClothMesh::numRows - 1) {
 				if (col < ClothMesh::numCols - 1) {
-					tempShear.push_back(spring(GetIndex(row, col), GetIndex(row + 1, col + 1), ShearRestLength, _particleSystem, k));
+					tempShear.push_back(spring(GetIndex(row, col), GetIndex(row + 1, col + 1), _shearRestLength, _particleSystem, _kShear, _dShear));
 				}
 				if (col > 0) {
-					tempShear.push_back(spring(GetIndex(row, col), GetIndex(row + 1, col - 1), ShearRestLength, _particleSystem, k));
+					tempShear.push_back(spring(GetIndex(row, col), GetIndex(row + 1, col - 1), _shearRestLength, _particleSystem, _kShear, _dShear));
 				}
 			}
 			//Bending
 			if (row + 2 < ClothMesh::numRows  ) {
-					tempBending.push_back(spring(GetIndex(row, col), GetIndex(row + 2, col), bendingRestLength, _particleSystem, k));
+					tempBending.push_back(spring(GetIndex(row, col), GetIndex(row + 2, col), _bendingRestLength, _particleSystem, _kBending,_dBending));
 			}
 			
 			if (col + 2 < ClothMesh::numCols ) {
-					tempBending.push_back(spring(GetIndex(row, col), GetIndex(row, col + 2), bendingRestLength, _particleSystem, k));
+					tempBending.push_back(spring(GetIndex(row, col), GetIndex(row, col + 2), _bendingRestLength, _particleSystem, _kBending,_dBending));
 
 			}
 			
 		}
 	}
-	springController = new SpringsController(tempStructural, tempBending, tempShear);
+	
+	delete(springController);
+	springController = new SpringsController(tempStructural, tempBending, tempShear, structural,bending,shear);
 }
 
 void Mesh::RenderUpdate()
@@ -119,6 +139,80 @@ void Mesh::RenderUpdate()
 
 void Mesh::RenderGui()
 {
+	ImGui::Checkbox(
+		"structural springs active",
+		&springController->_structuralSpringsEnabled
+	);
+	ImGui::Checkbox(
+		"shear springs active",
+		&springController->_shearSpringsEnabled
+	);
+	ImGui::Checkbox(
+		"bending springs active",
+		&springController->_bendingSpringsEnabled
+	);
+	if (ImGui::CollapsingHeader("Constants (will change on the next reset) ")) {
+		ImGui::SliderFloat(
+			"structural spring k",
+			&_kStructural, // pointer to an array of 3 floats
+			500.0f, // min
+			5000.0f // max
+		);
+		ImGui::SliderFloat(
+			"shear spring k",
+			&_kShear, // pointer to an array of 3 floats
+			500.0f, // min
+			5000.0f // max
+		);
+		ImGui::SliderFloat(
+			"bending spring k",
+			&_kBending, // pointer to an array of 3 floats
+			500.0f, // min
+			5000.0f // max
+		);
+
+		ImGui::SliderFloat(
+			"structural spring dumping",
+			&_dStructural, // pointer to an array of 3 floats
+			1.0f, // min
+			25.0f // max
+		);
+		ImGui::SliderFloat(
+			"shear spring dumping",
+			&_dShear, // pointer to an array of 3 floats
+			1.0f, // min
+			25.0f // max
+		);
+		ImGui::SliderFloat(
+			"bending spring dumping",
+			&_dBending, // pointer to an array of 3 floats
+			1.0f, // min
+			25.0f // max
+		);
+
+	}
+	if (ImGui::CollapsingHeader("Rest Lengths (will change on the next reset)")) {
+		ImGui::SliderFloat(
+			"structural spring rest length",
+			&_structuralRestLength, // pointer to an array of 3 floats
+			0.1f, // min
+			2.0f // max
+		);
+		ImGui::SliderFloat(
+			"shear spring rest length",
+			&_shearRestLength, // pointer to an array of 3 floats
+			0.1f, // min
+			2.0f // max
+		);
+		ImGui::SliderFloat(
+			"bending spring rest length",
+			&_bendingRestLength, // pointer to an array of 3 floats
+			0.1f, // min
+			2.0f // max
+		);
+	}
+		
+	
 }
 
 int Mesh::GetIndex(int row, int col)

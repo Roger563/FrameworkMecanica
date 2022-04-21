@@ -1,15 +1,15 @@
 
 #include "..\include\SpringsController.h"
 
-SpringsController::SpringsController(std::vector<spring> structuralSprings, std::vector<spring> bendingSprings, std::vector<spring> shearSprings)
+SpringsController::SpringsController(std::vector<spring> structuralSprings, std::vector<spring> bendingSprings, std::vector<spring> shearSprings,bool sEnabled, bool bEnabled, bool shEnabled)
 {
 	_structuralSprings = structuralSprings;
 	_bendingSprings = bendingSprings;
 	_shearSPrings = shearSprings;
 	
-	_structuralSpringsEnabled = true;
-	_bendingSpringsEnabled = true;
-	_shearSpringsEnabled = true;
+	_structuralSpringsEnabled = sEnabled;
+	_bendingSpringsEnabled = bEnabled;
+	_shearSpringsEnabled = shEnabled;
 }
 
 void SpringsController::UpdateSprings()
